@@ -1,0 +1,88 @@
+<html>
+	<head>
+		<title>Options — Send to Prowl</title>
+		<style>
+		#status {
+			display: none;
+			background: yellow;
+			color: black;
+			padding: 1em;
+		}
+		
+		#status.visible {
+			display: block;
+		}
+		
+		#status.ok {
+			background: green;
+			color: white;
+		}
+		
+		#status.error {
+			background: red;
+			color: white;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<div class="page">
+			<div id="status"></div>
+			<section>
+				<h3>Prowl</h3>
+				<label>
+					<span>API Key:</span>
+					<input id="api_key" type="text" size="40">
+				</label>
+			</section>
+		</div>
+	</body>
+	<script>
+		var api_key_el = document.getElementById('api_key');
+		var status_el = document.getElementById('status');
+		var clear_status;
+		
+		function load()
+		{
+			api_key_el.value = localStorage['api_key'];
+		}
+		
+		function save()
+		{
+			if (api_key_el.value.length != 40 && api_key_el.value.length != 0)
+				return false;
+			
+			localStorage['api_key'] = api_key_el.value;
+			return true;
+		}
+		
+		function status(message, level)
+		{
+			clearTimeout(clear_status);
+			status_el.innerText = message;
+			status_el.className = 'visible ' + level;
+			clear_status = setTimeout(function() {
+				status_el.className = '';
+			}, 5000);
+		}
+		
+		api_key_el.addEventListener('keydown', function(e)
+		{
+			switch (e.keyCode)
+			{
+				case 27: // esc
+					load();
+					e.preventDefault();
+					break;
+				case 13: // enter
+					if (save())
+						status('API Key Saved', 'ok')
+					else
+						status('Invalid API Key', 'error');
+					e.preventDefault();
+					break;
+			}
+		});
+		
+	</script>
+</html>

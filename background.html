@@ -1,0 +1,71 @@
+<html>
+<head>
+	<script>
+	
+		function urlencode(data)
+		{
+			var pairs = [];
+			
+			for (var key in data)
+				pairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
+			
+			return pairs.join('&');
+		}
+		
+		function sendToProwl(method, data, callback)
+		{
+			var body = urlencode(data);
+			
+			var request = new XMLHttpRequest();
+			request.open("POST", "https://api.prowlapp.com/publicapi/" + method, true);
+			request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			
+			request.onreadystatechange = function() {
+				if (request.readyState == 4)
+				{
+					if (!request.responseXML.getElementsByTagName('success'))
+						console.log(request.responseText);
+					
+					if (callback)
+						callback(request);
+				}
+			}
+			
+			request.send(body);
+		}
+		
+		function oncallback(request)
+		{
+			if (request.responseXML.getElementsByTagName('success'))
+			{
+				webkitNotifications.createNotification(
+				  '56-cloud.png',  // icon url - can be relative
+				  'Sent URL to Prowl',  // notification title
+				  'Prowl will do the rest'  // notification body text
+				);
+			}
+			else
+			{
+				var errors = request.responseXML.getElementsByTagName('error');
+				webkitNotifications.createNotification(
+				  '56-cloud.png',  // icon url - can be relative
+				  'Error while Sending URL to Prowl',  // notification title
+				  errors[0].innerText  // notification body text
+				);
+			}
+		}
+	
+		chrome.browserAction.onClicked.addListener(function() {
+			chrome.tabs.getSelected(null, function(tab) {
+				sendToProwl("add", {
+					"apikey": localStorage['api_key'],
+					"url": tab.url,
+					"application": "Chrome",
+					"event": "Open URL",
+					"description": "URL sent from your Chrome browser: " + tab.url
+				}, oncallback);
+			});
+		});
+	</script>
+</head>
+</html>
