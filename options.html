@@ -189,6 +189,7 @@
 					saveApiKey(
 						function() { status('API Key Saved', 'ok'); },
 						function() { status('Invalid API Key', 'error'); });
+					e.preventDefault();
 					break;
 			}
 		});
