@@ -50,19 +50,120 @@
 		var status_el = document.getElementById('status');
 		var clear_status;
 		
+		function urlencode(data)
+		{
+			var pairs = [];
+			
+			for (var key in data)
+				pairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
+			
+			return pairs.join('&');
+		}
+		
+		function Prowl()
+		{
+			this.provider_key = 'c8f364809d533a1fee2ebeaf87040fc600f37201';
+			this.host = "https://api.prowlapp.com/publicapi/";
+		}
+		
+		Prowl.prototype.call = function(method, action, data, onresponse)
+		{
+			var body = urlencode(data);
+			
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if (request.readyState == 4)
+					onresponse(request);
+			}
+			
+			if (method == 'GET')
+			{
+				request.open('GET', this.host + action + '?' + body, true);
+				request.send();
+			}
+			else
+			{
+				request.open('POST', this.host + action, true);
+				request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				request.send(body);
+			}
+		}
+		
+		Prowl.prototype.validateApiKey = function(key, onresponse)
+		{
+			this.call('GET', 'verify',
+				{
+					'providerkey': this.provider_key,
+					'apikey': key
+				},
+				function(response) {
+					onresponse(response.responseXML.getElementsByTagName('success').length > 0);
+				});
+		}
+		
+		Prowl.prototype.requestToken = function(onresponse)
+		{
+			this.call('GET', 'retrieve/token',
+				{
+					'providerkey': this.provider_key
+				},
+				function(response) {
+					if (response.responseXML.getElementsByTagName('error') > 0)
+						onresponse(false);
+					else
+						onresponse({
+							'token': response.responseXML.getElementsByTagName('retrieve')[0].getAttribute('token'),
+							'url': response.responseXML.getElementsByTagName('retrieve')[0].getAttribute('url')
+						});
+				});
+		}
+		
+		Prowl.prototype.requestKey = function(token, onresponse)
+		{
+			this.call('GET', 'retrieve/apikey',
+				{
+					'providerkey': this.provider_key,
+					'token': token
+				},
+				function(response) {
+					if (response.responseXML.getElementsByTagName('error') > 0)
+						onresponse(false);
+					else
+						onresponse(response.responseXML.getElementsByTagName('retrieve')[0].getAttribute('apikey'));
+				});
+		}
+		
+		var prowl = new Prowl();
+		
 		function load()
 		{
 			api_key_el.value = localStorage['api_key'];
 			close_tab_el.checked = localStorage['close_tab'];
 		}
 		
-		function saveApiKey()
+		function saveApiKey(onsuccess, onerror)
 		{
-			if (api_key_el.value.length != 40 && api_key_el.value.length != 0)
-				return false;
+			var api_key = api_key_el.value;
 			
-			localStorage['api_key'] = api_key_el.value;
-			return true;
+			if (api_key.length == 0)
+			{
+				localStorage['api_key'] = '';
+				onsuccess();
+			}
+			else if (api_key.length == 40)
+			{
+				prowl.validateApiKey(api_key, function(success) {
+					if (success)
+					{
+						localStorage['api_key'] = api_key;
+						onsuccess();
+					}
+					else
+						onerror();
+				});
+			}
+			else
+				onerror();
 		}
 		
 		function status(message, level)
@@ -84,11 +185,10 @@
 					e.preventDefault();
 					break;
 				case 13: // enter
-					if (saveApiKey())
-						status('API Key Saved', 'ok')
-					else
-						status('Invalid API Key', 'error');
-					e.preventDefault();
+					status('Validating Key…', '');
+					saveApiKey(
+						function() { status('API Key Saved', 'ok'); },
+						function() { status('Invalid API Key', 'error'); });
 					break;
 			}
 		});
