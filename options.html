@@ -40,6 +40,7 @@
 				<label>
 					<span>API Key:</span>
 					<input id="api_key" type="text" size="40">
+					<button id="request_api_key_button">Connect with Prowl</button>
 				</label>
 			</section>
 		</div>
@@ -48,6 +49,7 @@
 		var api_key_el = document.getElementById('api_key');
 		var close_tab_el = document.getElementById('close_tab');
 		var status_el = document.getElementById('status');
+		var request_api_key_button_el = document.getElementById('request_api_key_button');
 		var clear_status;
 		
 		function urlencode(data)
@@ -126,7 +128,7 @@
 					'token': token
 				},
 				function(response) {
-					if (response.responseXML.getElementsByTagName('error') > 0)
+					if (response.responseXML.getElementsByTagName('error').length > 0)
 						onresponse(false);
 					else
 						onresponse(response.responseXML.getElementsByTagName('retrieve')[0].getAttribute('apikey'));
@@ -137,8 +139,8 @@
 		
 		function load()
 		{
-			api_key_el.value = localStorage['api_key'];
-			close_tab_el.checked = localStorage['close_tab'];
+			api_key_el.value = localStorage['api_key'] || '';
+			close_tab_el.checked = !!localStorage['close_tab'];
 		}
 		
 		function saveApiKey(onsuccess, onerror)
@@ -198,6 +200,63 @@
 		{
 			localStorage['close_tab'] = close_tab_el.checked;
 		});
+		
+		var token = null;
+		
+		request_api_key_button_el.addEventListener('click', function(e)
+		{
+			request_api_key_button_el.disabled = true;
+			prowl.requestToken(function(response) {
+				if (!response)
+				{
+					status('Could not retrieve token used to request the key', 'error');
+					request_api_key_button_el.disabled = false;
+					return;
+				}
+				
+				token = response.token;
+				chrome.tabs.create(
+					{
+						'url': response.url
+					},
+					function(tab) {
+						chrome.tabs.onUpdated.addListener(function(aTab, data) {
+							if (aTab != tab.id || !data.url) // only detect url changes of 'our' tab
+								return;
+							
+							if (data.url.indexOf('?do=permit') == -1) // only the 'checkout' page
+								return;
+								
+							prowl.requestKey(token, function(api_key) {
+								if (api_key)
+								{
+									localStorage['api_key'] = api_key;
+									status('Key saved', 'ok');
+									load();
+								}
+								else
+								{
+									status('An error occurred while trying to retrieve the key', 'error');
+								}
+								
+								request_api_key_button_el.disabled = false;
+							});
+							
+							chrome.tabs.remove(aTab);
+						});
+						
+						chrome.tabs.onRemoved.addListener(function(aTab) {
+							if (tab.id == aTab)
+							{
+								status('Key request aborted because the tab was closed', '');
+								request_api_key_button_el.disabled = false;
+							}
+						});
+					});
+				
+				status('See the other Prowl tab thingy');
+			});
+		})
 		
 		load();
 	</script>
