@@ -29,6 +29,13 @@
 		<div class="page">
 			<div id="status"></div>
 			<section>
+				<h3>Behavior</h3>
+				<label class="radio">
+					<input type="checkbox" id="close_tab">
+					<span>Close the tab after the notification has been sent.</span>
+				</label>
+			</section>
+			<section>
 				<h3>Prowl</h3>
 				<label>
 					<span>API Key:</span>
@@ -39,15 +46,17 @@
 	</body>
 	<script>
 		var api_key_el = document.getElementById('api_key');
+		var close_tab_el = document.getElementById('close_tab');
 		var status_el = document.getElementById('status');
 		var clear_status;
 		
 		function load()
 		{
 			api_key_el.value = localStorage['api_key'];
+			close_tab_el.checked = localStorage['close_tab'];
 		}
 		
-		function save()
+		function saveApiKey()
 		{
 			if (api_key_el.value.length != 40 && api_key_el.value.length != 0)
 				return false;
@@ -75,7 +84,7 @@
 					e.preventDefault();
 					break;
 				case 13: // enter
-					if (save())
+					if (saveApiKey())
 						status('API Key Saved', 'ok')
 					else
 						status('Invalid API Key', 'error');
@@ -84,5 +93,11 @@
 			}
 		});
 		
+		close_tab_el.addEventListener('change', function(e)
+		{
+			localStorage['close_tab'] = close_tab_el.checked;
+		});
+		
+		load();
 	</script>
 </html>

@@ -12,7 +12,7 @@
 			return pairs.join('&');
 		}
 		
-		function sendToProwl(method, data, callback)
+		function sendToProwl(method, data, onsuccess, onerror)
 		{
 			var body = urlencode(data);
 			
@@ -23,47 +23,60 @@
 			request.onreadystatechange = function() {
 				if (request.readyState == 4)
 				{
-					if (!request.responseXML.getElementsByTagName('success'))
-						console.log(request.responseText);
-					
-					if (callback)
-						callback(request);
+					if (request.responseXML.getElementsByTagName('success'))
+					{
+						if (onsuccess)
+							onsuccess(request);
+					}
+					else
+					{
+						if (onerror)
+							onerror(request);
+					}
 				}
 			}
 			
 			request.send(body);
 		}
 		
-		function oncallback(request)
+		function showSuccessNotification(request)
 		{
-			if (request.responseXML.getElementsByTagName('success'))
-			{
-				webkitNotifications.createNotification(
-				  '56-cloud.png',  // icon url - can be relative
-				  'Sent URL to Prowl',  // notification title
-				  'Prowl will do the rest'  // notification body text
-				);
-			}
-			else
-			{
-				var errors = request.responseXML.getElementsByTagName('error');
-				webkitNotifications.createNotification(
-				  '56-cloud.png',  // icon url - can be relative
-				  'Error while Sending URL to Prowl',  // notification title
-				  errors[0].innerText  // notification body text
-				);
-			}
+			webkitNotifications.createNotification(
+			  '56-cloud.png',  // icon url - can be relative
+			  'Sent URL to Prowl',  // notification title
+			  'Prowl will do the rest'  // notification body text
+			).show();	
+		}
+		
+		function showErrorNotification(request)
+		{
+			var errors = request.responseXML.getElementsByTagName('error');
+			webkitNotifications.createNotification(
+			  '56-cloud.png',  // icon url - can be relative
+			  'Error while Sending URL to Prowl',  // notification title
+			  errors[0].innerText  // notification body text
+			).show();
 		}
 	
 		chrome.browserAction.onClicked.addListener(function() {
 			chrome.tabs.getSelected(null, function(tab) {
-				sendToProwl("add", {
-					"apikey": localStorage['api_key'],
-					"url": tab.url,
-					"application": "Chrome",
-					"event": "Open URL",
-					"description": "URL sent from your Chrome browser: " + tab.url
-				}, oncallback);
+				sendToProwl("add",
+					{
+						"apikey": localStorage['api_key'],
+						"url": tab.url,
+						"application": "Chrome",
+						"event": "Open URL",
+						"description": "URL sent from your Chrome browser: " + tab.url
+					},
+					function(request) {
+						showSuccessNotification(request);
+						if (localStorage['close_tab'])
+							chrome.tabs.remove(tab.id);
+					},
+					function(request) {
+						console.log(request.responseText);
+						showErrorNotification(request);
+					});
 			});
 		});
 	</script>
