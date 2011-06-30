@@ -41,11 +41,17 @@
 		
 		function showSuccessNotification(request)
 		{
-			webkitNotifications.createNotification(
+			var notification = webkitNotifications.createNotification(
 			  '56-cloud.png',  // icon url - can be relative
 			  'Sent URL to Prowl',  // notification title
 			  'Prowl will do the rest'  // notification body text
-			).show();	
+			);
+            
+            notification.show();
+
+            setTimeout(function() {
+                notification.cancel();
+            }, 3000);
 		}
 		
 		function showErrorNotification(request)
