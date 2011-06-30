@@ -22,28 +22,73 @@
 			background: red;
 			color: white;
 		}
-		
+
+        body {
+            font: 13px Helvetica, sans-serif;
+            padding: 16px;
+        }
+        
+        h1 {
+            font-weight: normal;
+            font-size: 200%;
+            color: #53637D;
+            text-shadow: white 0 1px 2px;
+            margin: 0;
+            padding: 0 0 4px 0; 
+        }
+
+        .page {
+            width: 800px;
+            display: table;
+        }
+        
+        .page > section {
+            display: table-row;
+        }
+
+        .page > section > * {
+            display: table-cell;
+            vertical-align: baseline;
+            padding: 17px 0 20px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .page > section > h3 {
+            font-size: 105%;
+        }
+        
+        .page label {
+            margin: 5px 0;
+        }
+        
+        .page label.radio {
+            display: block;
+        }
+        
 		</style>
 	</head>
 	<body>
+        <h1>Send to Prowl</h1>
+        <div id="status"></div>
 		<div class="page">
-			<div id="status"></div>
-			<section>
+            <section>
 				<h3>Behavior</h3>
-				<label class="radio">
-					<input type="checkbox" id="close_tab">
-					<span>Close the tab after the url has been sent.</span>
-				</label>
-                <label class="radio">
-                    <input type="checkbox" id="show_notification">
-                    <span>Show a popup notification when the url has been sent.</span>
-                </label>
+                <div>
+                    <label class="radio">
+                        <input type="checkbox" id="close_tab">
+                        <span>Close the tab after the url has been sent.</span>
+                    </label>
+                    <label class="radio">
+                        <input type="checkbox" id="show_notification">
+                        <span>Show a popup notification when the url has been sent.</span>
+                    </label>
+                </div>
 			</section>
 			<section>
 				<h3>Prowl</h3>
 				<label>
 					<span>API Key:</span>
-					<input id="api_key" type="text" size="40">
+					<input id="api_key" type="text" size="50">
 					<button id="request_api_key_button">Connect with Prowl</button>
 				</label>
 			</section>
