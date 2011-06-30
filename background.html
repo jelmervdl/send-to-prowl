@@ -72,7 +72,7 @@
 						"url": tab.url,
 						"application": "Chrome",
 						"event": "Open URL",
-						"description": "URL sent from your Chrome browser: " + tab.url
+						"description": tab.title + "\n" + tab.url
 					},
 					function(request) {
 						if (localStorage['show_notification'])
