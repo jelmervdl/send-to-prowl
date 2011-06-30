@@ -46,12 +46,12 @@
 			  'Sent URL to Prowl',  // notification title
 			  'Prowl will do the rest'  // notification body text
 			);
-            
-            notification.show();
-
-            setTimeout(function() {
-                notification.cancel();
-            }, 3000);
+			
+			notification.show();
+			
+			setTimeout(function() {
+				notification.cancel();
+			}, 3000);
 		}
 		
 		function showErrorNotification(request)
@@ -75,9 +75,9 @@
 						"description": "URL sent from your Chrome browser: " + tab.url
 					},
 					function(request) {
-                        if (localStorage['show_notification'])
-                            showSuccessNotification(request);
-                        
+						if (localStorage['show_notification'])
+							showSuccessNotification(request);
+						
 						if (localStorage['close_tab'])
 							chrome.tabs.remove(tab.id);
 					},

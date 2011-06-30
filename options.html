@@ -23,66 +23,66 @@
 			color: white;
 		}
 
-        body {
-            font: 13px Helvetica, sans-serif;
-            padding: 16px;
-        }
-        
-        h1 {
-            font-weight: normal;
-            font-size: 200%;
-            color: #53637D;
-            text-shadow: white 0 1px 2px;
-            margin: 0;
-            padding: 0 0 4px 0; 
-        }
+		body {
+			font: 13px Helvetica, sans-serif;
+			padding: 16px;
+		}
+		
+		h1 {
+			font-weight: normal;
+			font-size: 200%;
+			color: #53637D;
+			text-shadow: white 0 1px 2px;
+			margin: 0;
+			padding: 0 0 4px 0; 
+		}
 
-        .page {
-            width: 800px;
-            display: table;
-        }
-        
-        .page > section {
-            display: table-row;
-        }
+		.page {
+			width: 800px;
+			display: table;
+		}
+		
+		.page > section {
+			display: table-row;
+		}
 
-        .page > section > * {
-            display: table-cell;
-            vertical-align: baseline;
-            padding: 17px 0 20px 0;
-            border-top: 1px solid #eee;
-        }
+		.page > section > * {
+			display: table-cell;
+			vertical-align: baseline;
+			padding: 17px 0 20px 0;
+			border-top: 1px solid #eee;
+		}
 
-        .page > section > h3 {
-            font-size: 105%;
-        }
-        
-        .page label {
-            margin: 5px 0;
-        }
-        
-        .page label.radio {
-            display: block;
-        }
-        
+		.page > section > h3 {
+			font-size: 105%;
+		}
+		
+		.page label {
+			margin: 5px 0;
+		}
+		
+		.page label.radio {
+			display: block;
+		}
+		
 		</style>
 	</head>
 	<body>
-        <h1>Send to Prowl</h1>
-        <div id="status"></div>
+		<h1>Send to Prowl</h1>
+		<div id="status"></div>
 		<div class="page">
-            <section>
+			<section>
 				<h3>Behavior</h3>
-                <div>
-                    <label class="radio">
-                        <input type="checkbox" id="close_tab">
-                        <span>Close the tab after the url has been sent.</span>
-                    </label>
-                    <label class="radio">
-                        <input type="checkbox" id="show_notification">
-                        <span>Show a popup notification when the url has been sent.</span>
-                    </label>
-                </div>
+				<div>
+					<label class="radio">
+						<input type="checkbox" id="close_tab">
+						<span>Close the tab after the url has been sent.</span>
+					</label>
+					<label class="radio">
+						<input type="checkbox" id="show_notification">
+						<span>Show a popup notification when the url has been sent.</span>
+					</label>
+				</div>
 			</section>
 			<section>
 				<h3>Prowl</h3>
@@ -97,7 +97,7 @@
 	<script>
 		var api_key_el = document.getElementById('api_key');
 		var close_tab_el = document.getElementById('close_tab');
-        var show_notification_el = document.getElementById('show_notification');
+		var show_notification_el = document.getElementById('show_notification');
 		var status_el = document.getElementById('status');
 		var request_api_key_button_el = document.getElementById('request_api_key_button');
 		var clear_status;
@@ -191,7 +191,7 @@
 		{
 			api_key_el.value = localStorage['api_key'] || '';
 			close_tab_el.checked = !!localStorage['close_tab'];
-            show_notification_el.checked = !!localStorage['show_notification'];
+			show_notification_el.checked = !!localStorage['show_notification'];
 		}
 		
 		function saveApiKey(onsuccess, onerror)
@@ -251,12 +251,12 @@
 		{
 			localStorage['close_tab'] = close_tab_el.checked;
 		});
-       
-        show_notification_el.addEventListener('change', function(e)
-        {
-            localStorage['show_notification'] = show_notification_el.checked;
-        });
-        
+	   
+		show_notification_el.addEventListener('change', function(e)
+		{
+			localStorage['show_notification'] = show_notification_el.checked;
+		});
+		
 		var token = null;
 		
 		request_api_key_button_el.addEventListener('click', function(e)
