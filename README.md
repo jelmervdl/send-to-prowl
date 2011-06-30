@@ -8,4 +8,4 @@ For now, you'll have to clone the repository and use _Load unpacked extension…
 
 Credits
 =======
-The browser action icon, `56-cloud.png`, is part of the [Glyphish Free](http://glyphish.com/) icon set, and has been resized to a square image.
+The browser action icon, `56-cloud.png`, is part of the [Glyphish Free](http://glyphish.com/) icon set, and has been resized to a square image. The icon shown in the extensions list is an adaptation of the original [Prowl app](http://www.prowlapp.com) icon.
