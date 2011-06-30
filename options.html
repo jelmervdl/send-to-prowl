@@ -32,8 +32,12 @@
 				<h3>Behavior</h3>
 				<label class="radio">
 					<input type="checkbox" id="close_tab">
-					<span>Close the tab after the notification has been sent.</span>
+					<span>Close the tab after the url has been sent.</span>
 				</label>
+                <label class="radio">
+                    <input type="checkbox" id="show_notification">
+                    <span>Show a popup notification when the url has been sent.</span>
+                </label>
 			</section>
 			<section>
 				<h3>Prowl</h3>
@@ -48,6 +52,7 @@
 	<script>
 		var api_key_el = document.getElementById('api_key');
 		var close_tab_el = document.getElementById('close_tab');
+        var show_notification_el = document.getElementById('show_notification');
 		var status_el = document.getElementById('status');
 		var request_api_key_button_el = document.getElementById('request_api_key_button');
 		var clear_status;
@@ -141,6 +146,7 @@
 		{
 			api_key_el.value = localStorage['api_key'] || '';
 			close_tab_el.checked = !!localStorage['close_tab'];
+            show_notification_el.checked = !!localStorage['show_notification'];
 		}
 		
 		function saveApiKey(onsuccess, onerror)
@@ -200,7 +206,12 @@
 		{
 			localStorage['close_tab'] = close_tab_el.checked;
 		});
-		
+       
+        show_notification_el.addEventListener('change', function(e)
+        {
+            localStorage['close_tab'] = show_notification_el.checked;
+        });
+        
 		var token = null;
 		
 		request_api_key_button_el.addEventListener('click', function(e)

@@ -69,7 +69,9 @@
 						"description": "URL sent from your Chrome browser: " + tab.url
 					},
 					function(request) {
-						showSuccessNotification(request);
+                        if (localStorage['show_notification'])
+                            showSuccessNotification(request);
+                        
 						if (localStorage['close_tab'])
 							chrome.tabs.remove(tab.id);
 					},
