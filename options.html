@@ -190,8 +190,8 @@
 		function load()
 		{
 			api_key_el.value = localStorage['api_key'] || '';
-			close_tab_el.checked = !!localStorage['close_tab'];
-			show_notification_el.checked = !!localStorage['show_notification'];
+			close_tab_el.checked = JSON.parse(localStorage['close_tab']);
+			show_notification_el.checked = JSON.parse(localStorage['show_notification']);
 		}
 		
 		function saveApiKey(onsuccess, onerror)
@@ -249,12 +249,12 @@
 		
 		close_tab_el.addEventListener('change', function(e)
 		{
-			localStorage['close_tab'] = close_tab_el.checked;
+			localStorage['close_tab'] = JSON.stringify(close_tab_el.checked);
 		});
 	   
 		show_notification_el.addEventListener('change', function(e)
 		{
-			localStorage['show_notification'] = show_notification_el.checked;
+			localStorage['show_notification'] = JSON.stringify(show_notification_el.checked);
 		});
 		
 		var token = null;

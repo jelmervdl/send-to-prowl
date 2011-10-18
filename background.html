@@ -63,6 +63,13 @@
 			  errors[0].innerText  // notification body text
 			).show();
 		}
+
+		function preference(name, default_value)
+		{
+			return typeof localStorage[name] == 'undefined'
+				? default_value
+				: JSON.parse(localStorage[name]);
+		}
 	
 		chrome.browserAction.onClicked.addListener(function() {
 			chrome.tabs.getSelected(null, function(tab) {
@@ -75,10 +82,10 @@
 						"description": tab.title + "\n" + tab.url
 					},
 					function(request) {
-						if (localStorage['show_notification'])
+						if (preference('show_notification', false))
 							showSuccessNotification(request);
 						
-						if (localStorage['close_tab'])
+						if (preference('close_tab', true))
 							chrome.tabs.remove(tab.id);
 					},
 					function(request) {
