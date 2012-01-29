@@ -64,7 +64,25 @@
 		.page label.radio {
 			display: block;
 		}
-		
+
+		.page td,
+		.page th {
+			text-align: left;
+			font-size: 0.8em;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			padding: 5px;
+		}
+
+		#history td:nth-child(1) {
+			width: 450px;
+		}
+
+		#history td:nth-child(2) {
+			width: 200px;
+		}
+
 		</style>
 	</head>
 	<body>
@@ -92,6 +110,20 @@
 					<button id="request_api_key_button">Connect with Prowl</button>
 				</label>
 			</section>
+			<section>
+				<h3>History</h3>
+				<div>
+					<table id="history">
+						<thead>
+							<tr>
+								<th>Title</th>
+								<th>Date</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</section>
 		</div>
 	</body>
 	<script>
@@ -100,6 +132,7 @@
 		var show_notification_el = document.getElementById('show_notification');
 		var status_el = document.getElementById('status');
 		var request_api_key_button_el = document.getElementById('request_api_key_button');
+		var history_el = document.querySelector('#history tbody');
 		var clear_status;
 		
 		function urlencode(data)
@@ -192,6 +225,7 @@
 			api_key_el.value = localStorage['api_key'] || '';
 			close_tab_el.checked = JSON.parse(localStorage['close_tab']);
 			show_notification_el.checked = JSON.parse(localStorage['show_notification']);
+			loadHistory();
 		}
 		
 		function saveApiKey(onsuccess, onerror)
@@ -312,8 +346,37 @@
 				
 				status('See the other Prowl tab thingy');
 			});
-		})
-		
+		});
+
+		function loadHistory()
+		{
+			history_el.innerHTML = '';
+
+			var history = JSON.parse(localStorage['history'] || '[]');
+
+			for (var i = history.length - 1; i >= 0; --i)
+			{
+				var row_el = document.createElement('tr'),
+					title_cell_el = document.createElement('td'),
+					date_cell_el = document.createElement('td'),
+					link_el = document.createElement('a'),
+					date_el = document.createElement('time');
+				
+				row_el.appendChild(title_cell_el);
+				row_el.appendChild(date_cell_el);
+			
+				title_cell_el.appendChild(link_el);
+				date_cell_el.appendChild(date_el);
+
+				link_el.href = history[i].link;
+				link_el.appendChild(document.createTextNode(history[i].title));
+
+				date_el.appendChild(document.createTextNode(new Date(history[i].date).toLocaleDateString()));
+
+				history_el.appendChild(row_el);
+			}
+		}
+
 		load();
 	</script>
 </html>

@@ -70,6 +70,18 @@
 				? default_value
 				: JSON.parse(localStorage[name]);
 		}
+
+		function addToHistory(data)
+		{
+			var history = JSON.parse(localStorage['history'] || '[]');
+
+			while (history.length >= 10)
+				history.unshift();
+			
+			history.push(data);
+
+			localStorage['history'] = JSON.stringify(history);
+		}
 	
 		chrome.browserAction.onClicked.addListener(function() {
 			chrome.tabs.getSelected(null, function(tab) {
@@ -79,9 +91,15 @@
 						"url": tab.url,
 						"application": "Chrome",
 						"event": "Open URL",
-						"description": tab.title + "\n" + tab.url
+						"description": tab.title
 					},
 					function(request) {
+						addToHistory({
+							link: tab.url,
+							title: tab.title,
+							date: new Date()
+						});
+
 						if (preference('show_notification', false))
 							showSuccessNotification(request);
 						

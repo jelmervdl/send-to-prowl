@@ -1,6 +1,6 @@
 {
 	"name": "Send to Prowl",
-	"version": "1.0",
+	"version": "1.1",
 	"icons": {
 		"48": "prowl-cloud-48.png",
 		"128": "prowl-cloud-128.png"
