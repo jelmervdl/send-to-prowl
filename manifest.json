@@ -15,5 +15,8 @@
 	"browser_action": {
 		"default_icon": "56-cloud.png",
 		"default_title": "Send to Prowl"
-	}
+	},
+	"chrome_url_overrides" : {
+    	"newtab": "newtab.html"
+  	}
 }

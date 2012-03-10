@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>New Tab</title>
+		<style>
+		body {
+			background-color: #f4f4f4;
+			font: 1.2em/1.8em Helvetica;
+			color: #ccc;
+			padding: 6em;
+		}
+
+		a {
+			color: #ccc;
+			text-decoration: none;
+		}
+
+		a:hover {
+			color: #333;
+		}
+		</style>
+	</head>
+	<body>
+		<ol id="history"></ol>
+		<script>
+			function loadHistory()
+			{
+				var history = JSON.parse(localStorage['history'] || '[]'),
+					ol = document.getElementById('history');
+
+				while (ol.firstChild)
+					ol.removeChild(ol.firstChild);
+
+				for (var i = history.length - 1; i >= 0; --i)
+				{
+					var li = document.createElement('li'),
+						a = document.createElement('a');
+
+					a.href = history[i].link;
+					a.appendChild(document.createTextNode(history[i].title));
+
+					li.appendChild(a);
+					ol.appendChild(li);
+				}
+			}
+
+			window.addEventListener('storage', function(e) {
+				if (e.key == 'history')
+					loadHistory();
+			});
+
+			loadHistory();
+		</script>
+	</body>
+</html>
