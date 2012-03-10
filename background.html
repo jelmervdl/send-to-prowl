@@ -76,7 +76,7 @@
 			var history = JSON.parse(localStorage['history'] || '[]');
 
 			while (history.length >= 10)
-				history.unshift();
+				history.shift();
 			
 			history.push(data);
 
